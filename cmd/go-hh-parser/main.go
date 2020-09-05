@@ -1,7 +1,7 @@
 package main
 
 import (
-	"template/internal/app/hello"
+	"go-hh-parser/internal/app/hello"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-cmd = ./cmd/template/
+cmd = ./cmd/go-hh-parser/
 output = ./bin/
 
 all = build run

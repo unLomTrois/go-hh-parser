@@ -3,11 +3,14 @@ package core
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
 // Requests ...
-type Requests struct{}
+type Requests struct {
+	*formatter
+}
 
 // fetch ...
 func (r *Requests) fetch(url string) (*[]byte, error) {
@@ -38,4 +41,18 @@ func (r *Requests) GetFullVacancy(url string) (*Vacancy, error) {
 	}
 
 	return &vacancy, nil
+}
+
+// SearchVacancies ...
+func (r *Requests) SearchVacancies(params VacancyQueryParams) (*[]Vacancy, error) {
+
+	// build url for searching
+	u, err := r.buildQueryParams(params)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println(u)
+
+	return nil, nil
 }

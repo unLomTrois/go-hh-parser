@@ -8,6 +8,10 @@ type Core struct {
 // New ...
 func New() *Core {
 	return &Core{
-		Requests: &Requests{},
+		Requests: &Requests{
+			&formatter{
+				baselink: "https://api.hh.ru/vacancies?",
+			},
+		},
 	}
 }

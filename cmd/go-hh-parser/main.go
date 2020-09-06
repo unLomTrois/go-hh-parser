@@ -3,10 +3,13 @@ package main
 import (
 	"go-hh-parser/internal/app/core"
 	"log"
+	"sync"
 )
 
 func main() {
 	core := core.New()
+
+	var wg sync.WaitGroup
 
 	urls := []string{
 		"https://api.hh.ru/vacancies/38468170",
@@ -15,12 +18,17 @@ func main() {
 	}
 
 	for _, url := range urls {
+		wg.Add(1)
 
-		vacancy, err := core.Req.GetVacancy(url)
-		if err != nil {
-			log.Fatal(err)
-		}
+		go func(url string) {
+			vacancy, err := core.Req.GetVacancy(url)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer wg.Done()
 
-		log.Println(vacancy.Data)
+			log.Println(vacancy.Data)
+		}(url)
 	}
+	wg.Wait()
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"go-hh-parser/internal/app/core"
 	"log"
 	"sync"
@@ -10,7 +11,7 @@ func main() {
 	Core := core.New()
 
 	urls := []string{
-		"https://api.hh.ru/vacancies/38461984",
+		"https://api.hh.ru/vacancies/38840984",
 	}
 
 	var wg sync.WaitGroup
@@ -24,13 +25,20 @@ func main() {
 			}
 			defer wg.Done()
 
+			// data := *vacancy.Data
+
 			// get keyskills
-			keyskills := (*vacancy.Data)["key_skills"].(core.Interarr)
-			for _, skill := range keyskills {
-				log.Println(skill.(core.Intermap)["name"])
+			for _, skill := range vacancy.Keyskills {
+				log.Println(skill["name"])
 			}
 
-			log.Println(vacancy.Data)
+			// log.Println(string(*vacancy.Data))
+			jsonData, err := json.MarshalIndent(&vacancy, "", "  ")
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			log.Println(string(jsonData))
 		}(url)
 	}
 	wg.Wait()

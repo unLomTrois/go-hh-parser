@@ -19,20 +19,17 @@ func main() {
 		wg.Add(1)
 
 		go func(url string) {
-			vacancy, err := Core.Requests.GetVacancy(url)
+			vacancy, err := Core.Requests.GetFullVacancy(url)
 			if err != nil {
 				log.Fatal(err)
 			}
 			defer wg.Done()
-
-			// data := *vacancy.Data
 
 			// get keyskills
 			for _, skill := range vacancy.Keyskills {
 				log.Println(skill["name"])
 			}
 
-			// log.Println(string(*vacancy.Data))
 			jsonData, err := json.MarshalIndent(&vacancy, "", "  ")
 			if err != nil {
 				log.Fatal(err)

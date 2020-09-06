@@ -25,8 +25,8 @@ func (r *Requests) fetch(url string) (*[]byte, error) {
 	return &body, nil
 }
 
-// GetVacancy ...
-func (r *Requests) GetVacancy(url string) (*Vacancy, error) {
+// GetFullVacancy ...
+func (r *Requests) GetFullVacancy(url string) (*Vacancy, error) {
 	data, err := r.fetch(url)
 	if err != nil {
 		return nil, err

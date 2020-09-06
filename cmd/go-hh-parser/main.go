@@ -7,25 +7,28 @@ import (
 )
 
 func main() {
-	core := core.New()
-
-	var wg sync.WaitGroup
+	Core := core.New()
 
 	urls := []string{
-		"https://api.hh.ru/vacancies/38468170",
-		"https://api.hh.ru/vacancies/38468172",
-		"https://api.hh.ru/vacancies/38468173",
+		"https://api.hh.ru/vacancies/38461984",
 	}
 
+	var wg sync.WaitGroup
 	for _, url := range urls {
 		wg.Add(1)
 
 		go func(url string) {
-			vacancy, err := core.Req.GetVacancy(url)
+			vacancy, err := Core.Requests.GetVacancy(url)
 			if err != nil {
 				log.Fatal(err)
 			}
 			defer wg.Done()
+
+			// get keyskills
+			keyskills := (*vacancy.Data)["key_skills"].(core.Interarr)
+			for _, skill := range keyskills {
+				log.Println(skill.(core.Intermap)["name"])
+			}
 
 			log.Println(vacancy.Data)
 		}(url)

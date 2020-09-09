@@ -11,12 +11,13 @@ func main() {
 
 	pages, err := Core.Requests.SearchVacancies(
 		core.VacancyQueryParams{
-			Text:    "разработчик",
-			Area:    "1",
-			NoMagic: true,
-			Page:    0,
-			PerPage: 100,
-			OrderBy: "salary_desc",
+			Text:     "разработчик",
+			Area:     "1",
+			NoMagic:  true,
+			Page:     0,
+			PerPage:  100,
+			OrderBy:  "salary_desc",
+			Clusters: false,
 		},
 	)
 	if err != nil {

@@ -52,6 +52,31 @@ func (r *Requests) GetFullVacancy(url string) (*Vacancy, error) {
 // SearchVacancies ...
 func (r *Requests) SearchVacancies(params VacancyQueryParams) (*VacancyPage, error) {
 
+	// with clusters
+	if params.Clusters {
+		return r.searchByClusters(params)
+	}
+
+	// without clusters
+	params.Clusters = false
+
+	// build url for searching
+	url, err := r.buildQueryParams(params)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := r.fetch(url.String())
+
+	var vacancyPage VacancyPage
+	if err := json.Unmarshal(*data, &vacancyPage); err != nil {
+		return nil, err
+	}
+
+	return &vacancyPage, nil
+}
+
+func (r *Requests) searchByClusters(params VacancyQueryParams) (*VacancyPage, error) {
 	// build url for searching
 	url, err := r.buildQueryParams(params)
 	if err != nil {

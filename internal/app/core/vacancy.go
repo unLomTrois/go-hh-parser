@@ -21,24 +21,31 @@ type FullVacancy struct {
 	Keyskills []KeySkill `json:"key_skills"`
 }
 
+// KeySkill ...
+type KeySkill = map[string]string
+
 // VacancyPage ...
 type VacancyPage struct {
 	Items     []ShortVacancy `json:"items"`
 	Found     int            `json:"found"`
 	Pages     int            `json:"pages"`
 	PerPages  int            `json:"per_page"`
-	Clusters  interface{}    `json:"clusters"`
+	Clusters  *[]Cluster     `json:"clusters"`
 	Arguments interface{}    `json:"arguments"`
 	AltURL    string         `json:"alternate_url"`
+}
+
+// Cluster ...
+type Cluster struct {
+	ID    string        `json:"id"`
+	Name  string        `json:"name"`
+	Items []interface{} `json:"items"`
 }
 
 // ShortVacancyList ...
 type ShortVacancyList struct {
 	Items *[]ShortVacancy `json:"items"`
 }
-
-// KeySkill ...
-type KeySkill = map[string]string
 
 // VacancyQueryParams ...
 type VacancyQueryParams struct {

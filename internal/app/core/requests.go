@@ -1,9 +1,9 @@
 package core
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -35,8 +35,14 @@ func (r *Requests) GetFullVacancy(url string) (*Vacancy, error) {
 		return nil, err
 	}
 
+	// to save &
+	buf := new(bytes.Buffer)
+	enc := json.NewEncoder(buf)
+	enc.SetEscapeHTML(true)
+	_ = enc.Encode(data)
+
 	var vacancy Vacancy
-	if err := json.Unmarshal(*data, &vacancy); err != nil {
+	if err := json.Unmarshal(buf.Bytes(), &vacancy); err != nil {
 		return nil, err
 	}
 
@@ -44,15 +50,20 @@ func (r *Requests) GetFullVacancy(url string) (*Vacancy, error) {
 }
 
 // SearchVacancies ...
-func (r *Requests) SearchVacancies(params VacancyQueryParams) (*[]Vacancy, error) {
+func (r *Requests) SearchVacancies(params VacancyQueryParams) (*VacancyPage, error) {
 
 	// build url for searching
-	u, err := r.buildQueryParams(params)
+	url, err := r.buildQueryParams(params)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println(u)
+	data, err := r.fetch(url.String())
 
-	return nil, nil
+	var vacancyPage VacancyPage
+	if err := json.Unmarshal(*data, &vacancyPage); err != nil {
+		return nil, err
+	}
+
+	return &vacancyPage, nil
 }

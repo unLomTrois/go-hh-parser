@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -29,7 +30,7 @@ func (r *Requests) fetch(url string) (*[]byte, error) {
 }
 
 // GetFullVacancy ...
-func (r *Requests) GetFullVacancy(url string) (*Vacancy, error) {
+func (r *Requests) GetFullVacancy(url string) (*ShortVacancy, error) {
 	data, err := r.fetch(url)
 	if err != nil {
 		return nil, err
@@ -41,7 +42,7 @@ func (r *Requests) GetFullVacancy(url string) (*Vacancy, error) {
 	enc.SetEscapeHTML(true)
 	_ = enc.Encode(data)
 
-	var vacancy Vacancy
+	var vacancy ShortVacancy
 	if err := json.Unmarshal(buf.Bytes(), &vacancy); err != nil {
 		return nil, err
 	}
@@ -52,13 +53,76 @@ func (r *Requests) GetFullVacancy(url string) (*Vacancy, error) {
 // SearchVacancies ...
 func (r *Requests) SearchVacancies(params VacancyQueryParams) (*VacancyPage, error) {
 
-	// with clusters
-	if params.Clusters {
-		return r.searchByClusters(params)
+	// get advance info
+	info, err := r.getAdvanceVacancyInfo(params)
+	if err != nil {
+		return nil, err
+	}
+
+	if info.Found >= 2000 { // with clusters
+
+		if params.Clusters {
+			return r.searchByClusters(params)
+		}
 	}
 
 	// without clusters
-	params.Clusters = false
+
+	var pages int = info.Pages / 100
+
+	vacancyPage := *info
+
+	// channel
+	ch := make(chan *[]ShortVacancy, pages)
+
+	// add goroutins
+	for i := 0; i < pages; i++ {
+
+		go func(page int) {
+
+			list, err := r.getVacanciesFromPage(params, page)
+			if err != nil {
+				panic(err)
+			}
+
+			ch <- list
+		}(i)
+	}
+
+	// get data from goroutins
+	for {
+		vacancyPage.Items = append(vacancyPage.Items, *<-ch...)
+
+		if len(vacancyPage.Items) == info.Pages {
+			break
+		}
+	}
+
+	return &vacancyPage, nil
+}
+
+func (r *Requests) getVacanciesFromPage(params VacancyQueryParams, page int) (*[]ShortVacancy, error) {
+
+	params.Page = page
+
+	// build url for searching
+	url, err := r.buildQueryParams(params)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := r.fetch(url.String())
+
+	var vacancyList ShortVacancyList
+	if err := json.Unmarshal(*data, &vacancyList); err != nil {
+		return nil, err
+	}
+
+	return vacancyList.Items, nil
+}
+
+func (r *Requests) getAdvanceVacancyInfo(params VacancyQueryParams) (*VacancyPage, error) {
+	params.PerPage = 0
 
 	// build url for searching
 	url, err := r.buildQueryParams(params)
@@ -77,6 +141,8 @@ func (r *Requests) SearchVacancies(params VacancyQueryParams) (*VacancyPage, err
 }
 
 func (r *Requests) searchByClusters(params VacancyQueryParams) (*VacancyPage, error) {
+
+	log.Println("LOL")
 	// build url for searching
 	url, err := r.buildQueryParams(params)
 	if err != nil {

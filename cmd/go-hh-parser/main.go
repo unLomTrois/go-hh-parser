@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"go-hh-parser/internal/app/core"
 	"log"
 )
@@ -24,13 +23,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	jsonData, err := json.MarshalIndent(&pages, "", " ")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// jsonData, err := json.MarshalIndent(&pages, "", " ")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	log.Println(string(jsonData))
+	// log.Println(string(jsonData))
 	log.Println(pages.AltURL)
+	log.Println(len(pages.Items))
 
 	// urls := []string{
 	// 	"https://api.hh.ru/vacancies/38840984",

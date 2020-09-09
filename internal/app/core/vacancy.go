@@ -1,10 +1,9 @@
 package core
 
-// Vacancy ...
-type Vacancy struct {
-	ID     string  `json:"id"`
-	Salary *salary `json:"salary"`
-	URL    string  `json:"url"`
+// ShortVacancy ...
+type ShortVacancy struct {
+	ID  string `json:"id"`
+	URL string `json:"url"`
 }
 
 // salary ...
@@ -17,19 +16,25 @@ type salary struct {
 
 // FullVacancy ...
 type FullVacancy struct {
-	Vacancy
+	ShortVacancy
+	Salary    *salary    `json:"salary"`
 	Keyskills []KeySkill `json:"key_skills"`
 }
 
 // VacancyPage ...
 type VacancyPage struct {
-	Items     []Vacancy   `json:"items"`
-	Found     int         `json:"found"`
-	Pages     int         `json:"pages"`
-	PerPages  int         `json:"per_page"`
-	Clusters  interface{} `json:"clusters"`
-	Arguments interface{} `json:"arguments"`
-	AltURL    string      `json:"alternate_url"`
+	Items     []ShortVacancy `json:"items"`
+	Found     int            `json:"found"`
+	Pages     int            `json:"pages"`
+	PerPages  int            `json:"per_page"`
+	Clusters  interface{}    `json:"clusters"`
+	Arguments interface{}    `json:"arguments"`
+	AltURL    string         `json:"alternate_url"`
+}
+
+// ShortVacancyList ...
+type ShortVacancyList struct {
+	Items *[]ShortVacancy `json:"items"`
 }
 
 // KeySkill ...

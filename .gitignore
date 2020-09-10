@@ -9,7 +9,7 @@
 *.dylib
 
 # Binaries on linux
-bin
+bin/
 
 # Test binary, build with `go test -c`
 *.test
@@ -25,3 +25,6 @@ vendor/
 
 # configs
 configs/*.json
+
+# app's logs
+log/

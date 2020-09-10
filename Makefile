@@ -1,5 +1,6 @@
 cmd = ./cmd/go-hh-parser/
 output = ./bin/
+log = ./log
 
 all = build run
 .PHONY: all
@@ -9,6 +10,7 @@ build:
 	go build -v -o $(output) $(cmd)
 
 run:
-	go run -v $(cmd)
+	mkdir -p $(log)
+	go run -v $(cmd) &> ${log}/log.log
 
 .DEFAULT_GOAL := build

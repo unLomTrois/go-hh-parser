@@ -1,3 +1,6 @@
-# go-template
+# go-hh-parser
 
-Based on https://github.com/golang-standards/project-layout
+Портирование [Node.js версии](https://github.com/unLomTrois/node-hh-parser) парсера-анализатора сайта HeadHunter на язык Golang.
+Всё приложение основано на [официальной документации использоания API HeadHunter](https://github.com/hhru/api).
+
+Работа приложения носит исключительно научно-исследовательский характер. Цель состоит в исследовании области рынка трудоустройства в пределах бывших и нынешних стран СНГ и дальнейшем анализе полученной информации.

@@ -8,7 +8,7 @@ import (
 func main() {
 	Core := core.New()
 
-	pages, err := Core.Requests.SearchVacancies(
+	_, err := Core.Requests.SearchVacancies(
 		core.VacancyQueryParams{
 			Text:     "разработчик",
 			Area:     "1",
@@ -16,21 +16,21 @@ func main() {
 			Page:     0,
 			PerPage:  100,
 			OrderBy:  "salary_desc",
-			Clusters: false,
+			Clusters: true,
 		},
 	)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// jsonData, err := json.MarshalIndent(&pages, "", " ")
+	// jsonData, err := json.MarshalIndent(&(*pages.Clusters)[4].Items, "", " ")
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
 
 	// log.Println(string(jsonData))
-	log.Println(pages.AltURL)
-	log.Println(len(pages.Items))
+	// log.Println((*pages.Clusters)[4].Items)
+	// log.Println(len(pages.Itemsх))
 
 	// urls := []string{
 	// 	"https://api.hh.ru/vacancies/38840984",

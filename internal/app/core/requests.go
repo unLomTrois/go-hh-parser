@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 )
 
 // Requests ...
@@ -142,7 +143,8 @@ func (r *Requests) getAdvanceVacancyInfo(params VacancyQueryParams) (*VacancyPag
 
 func (r *Requests) searchByClusters(params VacancyQueryParams) (*VacancyPage, error) {
 
-	log.Println("LOL")
+	params.PerPage = 0
+
 	// build url for searching
 	url, err := r.buildQueryParams(params)
 	if err != nil {
@@ -150,6 +152,68 @@ func (r *Requests) searchByClusters(params VacancyQueryParams) (*VacancyPage, er
 	}
 
 	data, err := r.fetch(url.String())
+
+	var vacancyPage VacancyPage
+	if err := json.Unmarshal(*data, &vacancyPage); err != nil {
+		return nil, err
+	}
+
+	// clusters
+	experienceCluster := (*vacancyPage.Clusters)[4]
+
+	ch := make(chan *VacancyPage, 4)
+
+	// experience cluster
+	for _, item := range experienceCluster.Items {
+		log.Println(item)
+
+		// if item.Count > 2000 {
+
+		go func(u string) {
+
+			URL, err := url.Parse(u)
+			if err != nil {
+				panic(err)
+			}
+
+			vacpage, err := r.getInfoFromCluster(URL)
+			if err != nil {
+				panic(err)
+			}
+
+			log.Println(vacpage.Found)
+
+			ch <- vacpage
+		}(item.URL)
+		// }
+	}
+
+	for i := 0; i < 4; i++ {
+		// lol := *<-ch
+
+		// jsonData, err := json.MarshalIndent(&(*lol.Clusters), "", " ")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// log.Println(string(jsonData), "\n")
+
+	}
+
+	return &vacancyPage, nil
+}
+
+func (r *Requests) getInfoFromCluster(u *url.URL) (*VacancyPage, error) {
+
+	// q := u.Query()
+	// q.Set("clusters", "false")
+	// q.Set("per_page", "100")
+	// u.RawQuery = q.Encode()
+
+	data, err := r.fetch(u.String())
+	if err != nil {
+		return nil, err
+	}
 
 	var vacancyPage VacancyPage
 	if err := json.Unmarshal(*data, &vacancyPage); err != nil {

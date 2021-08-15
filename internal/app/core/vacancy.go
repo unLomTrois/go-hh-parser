@@ -35,11 +35,18 @@ type VacancyPage struct {
 	AltURL    string         `json:"alternate_url"`
 }
 
+// ClusterItems ...
+type ClusterItems struct {
+	Name  string `json:"name"`
+	URL   string `json:"url"`
+	Count int    `json:"count"`
+}
+
 // Cluster ...
 type Cluster struct {
-	ID    string        `json:"id"`
-	Name  string        `json:"name"`
-	Items []interface{} `json:"items"`
+	ID    string         `json:"id"`
+	Name  string         `json:"name"`
+	Items []ClusterItems `json:"items"`
 }
 
 // ShortVacancyList ...
